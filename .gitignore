@@ -1,0 +1,36 @@
+# Keil build output
+List/
+Objects/
+*.axf
+*.bin
+*.hex
+*.o
+*.obj
+*.d
+*.crf
+*.lst
+*.map
+*.lnp
+*.plg
+*.tra
+*.dep
+*.build_log.htm
+
+# Keil per-user settings and backups
+*.uvgui*
+*.uvopt*
+*.bak
+
+# Unreferenced legacy duplicates kept in the local source archive
+src/UpLib/UP_Woody_Speech recognition
+src/UpLib/UP_Woody_Speech recognition.c
+
+# Editor and OS metadata
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+.DS_Store
+Thumbs.db
+desktop.ini

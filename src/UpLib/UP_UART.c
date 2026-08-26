@@ -27,8 +27,8 @@ typedef struct _CDSFrame_Info {	   	//CDS帧队列结构体
 } CDSFrame_Info;
 
 CDSFrame_Info g_CDSFrames[MAX_FRAME_NUM];	//CDS帧队列	
-u8 g_CDSFrames_Tail = 0;		//CDS帧队列尾指针
-u8 g_CDSFrames_Head = 0;		//CDS帧队列头指针
+volatile u8 g_CDSFrames_Tail = 0;		//CDS帧队列尾指针
+volatile u8 g_CDSFrames_Head = 0;		//CDS帧队列头指针
 
 void UP_UART1_Putc(unsigned char c)
 {
@@ -81,6 +81,9 @@ void UP_UART5_Puts(char * str)
 //检查是否有舵机数据帧需要发送（每1ms检查一次）
 void CheckCDSSend(void)
 {
+	/* Keep the current DMA source buffer stable until transmission completes. */
+	if((DMA1_Channel2->CCR & DMA_CCR1_EN) != 0)
+		return;
 	//判断队列是否为空
 	if(g_CDSFrames_Head == g_CDSFrames_Tail)
 		return;
@@ -100,6 +103,9 @@ void UP_Uart3_SendCDSFrame(u8 id, u8 len, u8 cmd, u8* pData)
 	unsigned char i;
  	unsigned char csum = 0;
 	u16 pos = 0;
+	/* len includes command and checksum; other bytes are read from pData. */
+	if(len < 2 || len + 4 > MAX_BUF_NUM || (len > 2 && pData == 0))
+		return;
 	//判断缓存是否已满
 	if(g_CDSFrames_Head == g_CDSFrames_Tail-1 || 
 		(g_CDSFrames_Tail == 0 && g_CDSFrames_Head == MAX_FRAME_NUM-1))

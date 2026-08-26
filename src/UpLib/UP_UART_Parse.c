@@ -18,6 +18,7 @@ void USR232_RecHandler(u32 pdata)
 	static u8 sum = 0;
 	u8 data;
 	u8 i;
+	u8 next;
 	data = (u8) pdata;
 	//USR232_RecNum++;dg r
 	recdata = data;
@@ -44,6 +45,12 @@ void USR232_RecHandler(u32 pdata)
 	{
 		if(2 == index)	
 		{	
+			if(data > UP_UART_DATANUM_MAX)
+			{
+				FrameStart = 0;
+				index = 0;
+				return;
+			}
 			USR232_RecBuf[2] = data;
 			index = 3;
 			sum = 0x55+0xaa+data;
@@ -60,15 +67,20 @@ void USR232_RecHandler(u32 pdata)
 				
 				if(data == sum)
 				{				
+					next = USR232_Frame.Head + 1;
+					if(next >= UP_UART_FRAMENUM_MAX)
+						next = 0;
+					if(next == USR232_Frame.Tail)
+					{
+						FrameStart = 0;
+						return;
+					}
 					USR232_Frame.DataBuf[USR232_Frame.Head].len = USR232_RecBuf[2];
 					USR232_Frame.DataBuf[USR232_Frame.Head].cmd = USR232_RecBuf[3];
 					for(i=0;i<USR232_RecBuf[2];i++)
 						USR232_Frame.DataBuf[USR232_Frame.Head].data[i]=USR232_RecBuf[4+i];
 					
-					USR232_Frame.Head += 1;
-					if(USR232_Frame.Head>UP_UART_FRAMENUM_MAX)
-						USR232_Frame.Head = 0;
-					//switch()
+					USR232_Frame.Head = next;
 				}
 				FrameStart = 0;
 			}		
@@ -91,7 +103,7 @@ void COM_TIMER_handler(u32 null)
 	{
 		USR232_Parse(&USR232_Frame.DataBuf[USR232_Frame.Tail]);
 		USR232_Frame.Tail += 1;
-		if(USR232_Frame.Tail > UP_UART_FRAMENUM_MAX)
+		if(USR232_Frame.Tail >= UP_UART_FRAMENUM_MAX)
 			USR232_Frame.Tail = 0;
 	}
 	

@@ -83,7 +83,7 @@ void UP_PWM_Init(void)
 //设置占空时间0~4095
 void UP_PWM_SetDutyTime(u8 Channel, u16 DutyTime)	
 {
-	if(Channel > UP_PWM_NUM || DutyTime > 4095)
+	if(Channel >= UP_PWM_NUM || DutyTime > 4095)
 		return;
 	g_UP_PWMDutyTime[Channel] = DutyTime;
 	switch(Channel)
@@ -120,7 +120,7 @@ void UP_PWM_SetFrequency(u32 Frequency)
 //设置IO输出
 void  UP_PWM_SetIO(u8 Channel, u8 Value)
 {
-	if(Channel > UP_PWM_NUM || g_UP_bPWMMode[Channel] == 1)
+	if(Channel >= UP_PWM_NUM || Value > 1 || g_UP_bPWMMode[Channel] == 1)
 		return;
 	switch(Channel)								//将相应的端口设置成需要的电平
 	{
@@ -135,7 +135,7 @@ void  UP_PWM_SetIO(u8 Channel, u8 Value)
 //使能PWM模式输出
 void  UP_PWM_Enable(u8 Channel, FunctionalState NewState)
 {  
-	if(Channel > UP_PWM_NUM)
+	if(Channel >= UP_PWM_NUM)
 		return;
 	if(NewState == ENABLE)
 	{

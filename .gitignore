@@ -34,3 +34,9 @@ src/UpLib/UP_Woody_Speech recognition.c
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Local vendor manuals, installers, archives, and course resources
+/01 硬件资料/
+/02 软件开发/
+/04 配套资源/
+/六足爬行机器人搭建手册.pdf

@@ -3,24 +3,25 @@ u8 robot_state = 0;
 u8 robot_old_state = 0;
 bool  forward_flag = 1;
 
-void GetState();
-bool IsStateChanged();
-void GoForward();//(250,364,273,219)(200,455,341,272)(400,228,171,136) 
-void TurnLeft(int delay,int speed1,int speed2);//(300,303,228,182)
-void TurnRight(int delay,int speed1,int speed2);
-void BackForward();//(250,364,273)(200,455,341)
-void Squat();
-void Standup();
-void BackSquat();
-void WaveHead(u8 cycle);
-void ShakeHead(u8 cycle);
-void Nod(u8 cycle);
-void Dance();
-void Play();
+static void GetState(void);
+static bool IsStateChanged(void);
+static void GoForward(void);
+static void TurnLeft(int delay, int speed1, int speed2);
+static void TurnRight(int delay, int speed1, int speed2);
+static void BackForward(void);
+static void Squat(void);
+static void Standup(void);
+static void BackSquat(void);
+static void WaveHead(u8 cycle);
+static void ShakeHead(u8 cycle);
+static void Nod(u8 cycle);
+static void Dance(void);
+static void Play(void);
 int main(void)
 {
     bool  bFirst = 0;
     int  j = 0;
+    bool state_changed;
 	
 		UP_System_Init();
 
@@ -49,7 +50,9 @@ int main(void)
 		
 		while(1)
 		{
+				robot_old_state = robot_state;
 				GetState();
+				state_changed = (robot_old_state != robot_state);
 				switch(robot_state)
 				{
 						case 1://Œﬁ’œ∞≠
@@ -59,7 +62,7 @@ int main(void)
 								}	
 								else
 								{
-									if(!IsStateChanged())
+									if(!state_changed)
 									{
 										j++; 
 										j %= 15;
@@ -71,7 +74,7 @@ int main(void)
 								break;
 								
 						case 2://◊Û≤‡’œ∞≠
-								if(IsStateChanged())
+								if(state_changed)
 								{
 									BackForward();									
 								}
@@ -79,7 +82,7 @@ int main(void)
 								break;
 								
 						case 3://”“≤‡’œ∞≠
-								if(IsStateChanged())
+								if(state_changed)
 								{
 									BackForward();									
 								}
@@ -123,7 +126,7 @@ int main(void)
 		
 }
 
-void GetState()
+static void GetState(void)
 {
 	      int  ad = 0;
         int  io1 = 0;
@@ -208,22 +211,14 @@ void GetState()
 					forward_flag = 1;
 				}
 }
-bool IsStateChanged()
+static bool IsStateChanged(void)
 {
-	robot_old_state = robot_state;
+	u8 previous_state = robot_state;
 	GetState();
-	if(robot_old_state==robot_state)
-	{
-		return 0;
-	}		
-	else
-	{
-		robot_old_state = robot_state;
-		return 1;
-	}
+	return previous_state != robot_state;
 }
 
-void GoForward()
+static void GoForward(void)
 {
 	  static u8 time = 0;
 	  time++;
@@ -329,7 +324,7 @@ void GoForward()
 }
 
 
-void TurnLeft(int delay,int speed1,int speed2)
+static void TurnLeft(int delay, int speed1, int speed2)
 {
         UP_CDS_SetAngle(1,480,speed1);
         UP_CDS_SetAngle(2,619,100);
@@ -416,7 +411,6 @@ void TurnLeft(int delay,int speed1,int speed2)
         
         UP_CDS_SetAngle(14,610,speed1);   
         UP_CDS_SetAngle(15,278,speed2);          
-        //        
         
 				UP_IOout_SetIO(0,1);
 				UP_IOout_SetIO(1,1); 
@@ -424,7 +418,7 @@ void TurnLeft(int delay,int speed1,int speed2)
 			   	      
         UP_delay_ms(delay+50);
 }
-void TurnRight(int delay,int speed1,int speed2)
+static void TurnRight(int delay, int speed1, int speed2)
 {
         UP_CDS_SetAngle(1,280,speed1);
         UP_CDS_SetAngle(2,619,100);
@@ -449,7 +443,6 @@ void TurnRight(int delay,int speed1,int speed2)
         UP_CDS_SetAngle(16,511,speed1);
         UP_CDS_SetAngle(17,489,speed1);
         UP_CDS_SetAngle(18,392,speed2);
-        //
         
 				UP_IOout_SetIO(0,1);
 				UP_IOout_SetIO(1,1);
@@ -472,7 +465,6 @@ void TurnRight(int delay,int speed1,int speed2)
         UP_CDS_SetAngle(17,589,speed1);
         UP_CDS_SetAngle(18,317,speed2);
         
-        //
 				UP_IOout_SetIO(0,1);
 				UP_IOout_SetIO(1,1); 
 				UP_IOout_SetIO(2,1);  
@@ -496,7 +488,6 @@ void TurnRight(int delay,int speed1,int speed2)
         UP_CDS_SetAngle(15,353,speed2);
         
         UP_CDS_SetAngle(16,311,speed1);
-        //
         
 				UP_IOout_SetIO(0,0);
 				UP_IOout_SetIO(1,0); 
@@ -512,7 +503,6 @@ void TurnRight(int delay,int speed1,int speed2)
         
         UP_CDS_SetAngle(14,610,speed1);   
         UP_CDS_SetAngle(15,278,speed2);          
-        //
  
 				UP_IOout_SetIO(0,1);
 				UP_IOout_SetIO(1,1); 
@@ -520,7 +510,7 @@ void TurnRight(int delay,int speed1,int speed2)
 	          
         UP_delay_ms(delay+50);
 }
-void BackForward()
+static void BackForward(void)
 {
         UP_CDS_SetAngle(1,278,364);
         UP_CDS_SetAngle(2,510,100);
@@ -545,7 +535,6 @@ void BackForward()
         UP_CDS_SetAngle(16,305,364);
         UP_CDS_SetAngle(17,443,364);
         UP_CDS_SetAngle(18,349,328);
-        //
 
 				UP_IOout_SetIO(0,1);
 				UP_IOout_SetIO(1,1);
@@ -567,7 +556,6 @@ void BackForward()
         UP_CDS_SetAngle(17,543,364);
         UP_CDS_SetAngle(18,259,328);
         
-        //
 				UP_IOout_SetIO(2,1);
 				UP_IOout_SetIO(5,1);
 				UP_IOout_SetIO(1,0);
@@ -592,7 +580,6 @@ void BackForward()
         UP_CDS_SetAngle(15,304,328);
         
         UP_CDS_SetAngle(16,505,364);
-        //
         
 				UP_IOout_SetIO(1,1);
 				UP_IOout_SetIO(4,1);
@@ -609,11 +596,10 @@ void BackForward()
         
         UP_CDS_SetAngle(14,556,364);   
         UP_CDS_SetAngle(15,214,328);          
-        //
                
         UP_delay_ms(300);
 }
-void Squat()
+static void Squat(void)
 {
 		    UP_CDS_SetAngle(1,472,512);
 		    UP_CDS_SetAngle(2,430,512);
@@ -633,7 +619,6 @@ void Squat()
 		    UP_CDS_SetAngle(16,429,512);
 		    UP_CDS_SetAngle(17,429,512);
 		    UP_CDS_SetAngle(18,131,512);
-        //  
        	UP_IOout_SetIO(0,1);
 				UP_IOout_SetIO(1,0);
 				UP_IOout_SetIO(2,1);
@@ -647,7 +632,7 @@ void Squat()
 		    }	        
         UP_delay_ms(1000);
 }
-void Standup()
+static void Standup(void)
 {
 		     UP_CDS_SetAngle(1,472,512);
 		    UP_CDS_SetAngle(2,639,512);
@@ -667,7 +652,6 @@ void Standup()
 		    UP_CDS_SetAngle(16,429,512);
 		    UP_CDS_SetAngle(17,654,512);
 		    UP_CDS_SetAngle(18,358,512);
-        //
  				UP_IOout_SetIO(0,0);
 				UP_IOout_SetIO(1,0);
 				UP_IOout_SetIO(2,0);
@@ -681,7 +665,7 @@ void Standup()
 		    }	        
         UP_delay_ms(1000);	
 }
-void BackSquat()
+static void BackSquat(void)
 {
     UP_CDS_SetAngle(1,390,512);
     UP_CDS_SetAngle(2,539,512);
@@ -701,7 +685,6 @@ void BackSquat()
     UP_CDS_SetAngle(16,429,512);
     UP_CDS_SetAngle(17,678,512);
     UP_CDS_SetAngle(18,356,512);
-    //
    	UP_IOout_SetIO(0,0);
 		UP_IOout_SetIO(1,1);
 		UP_IOout_SetIO(2,0);
@@ -715,12 +698,11 @@ void BackSquat()
     }	        
     UP_delay_ms(1000);
 }
-void WaveHead(u8 cycle)
+static void WaveHead(u8 cycle)
 {
 		u8 cyc = 0;
     UP_CDS_SetAngle(19,512,512);
     UP_CDS_SetAngle(20,512,512);
-    //	
 		UP_IOout_SetIO(0,1);
 		UP_IOout_SetIO(1,1);
 		UP_IOout_SetIO(2,1);
@@ -738,7 +720,6 @@ void WaveHead(u8 cycle)
     {
  	  	UP_CDS_SetAngle(19,462,512);
    		UP_CDS_SetAngle(20,562,512);
-   		//    
 			UP_IOout_SetIO(0,0);
 			UP_IOout_SetIO(1,1);
 			UP_IOout_SetIO(2,0);
@@ -749,7 +730,6 @@ void WaveHead(u8 cycle)
 
 	    UP_CDS_SetAngle(19,512,512);
 	    UP_CDS_SetAngle(20,512,512);
-	    // 
 			UP_IOout_SetIO(0,1);
 			UP_IOout_SetIO(1,0);
 			UP_IOout_SetIO(2,1);	    
@@ -760,7 +740,6 @@ void WaveHead(u8 cycle)
 
 	    UP_CDS_SetAngle(19,562,512);
 	    UP_CDS_SetAngle(20,562,512);
-	    //
 	    
 			UP_IOout_SetIO(0,0);
 			UP_IOout_SetIO(1,1);
@@ -772,7 +751,6 @@ void WaveHead(u8 cycle)
 	    
 	    UP_CDS_SetAngle(19,512,512);
 	    UP_CDS_SetAngle(20,512,512);
-	    //    
 			UP_IOout_SetIO(0,1);
 			UP_IOout_SetIO(1,0);
 			UP_IOout_SetIO(2,1);	    
@@ -787,12 +765,11 @@ void WaveHead(u8 cycle)
 	    }		     
     }
 }
-void ShakeHead(u8 cycle)
+static void ShakeHead(u8 cycle)
 {
 	  u8 cyc = 0;
     UP_CDS_SetAngle(19,512,512);
     UP_CDS_SetAngle(20,580,512);
-    //	
 		UP_IOout_SetIO(0,1);
 		UP_IOout_SetIO(1,1);
 		UP_IOout_SetIO(2,1);
@@ -807,7 +784,6 @@ void ShakeHead(u8 cycle)
     for(cyc=0;cyc<cycle;cyc++)
     {
  	   	UP_CDS_SetAngle(19,432,200);
-   		//   
   		UP_IOout_SetIO(0,0);
 			UP_IOout_SetIO(1,0);
 			UP_IOout_SetIO(2,0);
@@ -821,7 +797,6 @@ void ShakeHead(u8 cycle)
 				break;
 	    }		
 	    UP_CDS_SetAngle(19,592,200);
-	    //    
 			UP_IOout_SetIO(0,0);
 			UP_IOout_SetIO(1,1);
 			UP_IOout_SetIO(2,0);
@@ -837,14 +812,12 @@ void ShakeHead(u8 cycle)
     }
 		UP_CDS_SetAngle(19,512,200);	    
     UP_CDS_SetAngle(20,512,512);
-	  // 
 }
-void Nod(u8 cycle)
+static void Nod(u8 cycle)
 {
 	  u8 cyc = 0;
     UP_CDS_SetAngle(19,512,512);
     UP_CDS_SetAngle(20,512,512);
-    //	
 		UP_IOout_SetIO(0,1);
 		UP_IOout_SetIO(1,1);
 		UP_IOout_SetIO(2,1);
@@ -861,7 +834,6 @@ void Nod(u8 cycle)
     {
  	   	UP_CDS_SetAngle(19,462,512);
    		UP_CDS_SetAngle(20,562,512);
-   		//   
   		UP_IOout_SetIO(0,0);
 			UP_IOout_SetIO(1,0);
 			UP_IOout_SetIO(2,0);
@@ -873,7 +845,6 @@ void Nod(u8 cycle)
 
 	    UP_CDS_SetAngle(19,512,512);
 	    UP_CDS_SetAngle(20,462,512);
-	    //    
 			UP_IOout_SetIO(0,1);
 			UP_IOout_SetIO(1,1);
 			UP_IOout_SetIO(2,1);
@@ -885,7 +856,6 @@ void Nod(u8 cycle)
 
 	    UP_CDS_SetAngle(19,562,512);
 	    UP_CDS_SetAngle(20,562,512);
-	    //  
   		UP_IOout_SetIO(0,0);
 			UP_IOout_SetIO(1,0);
 			UP_IOout_SetIO(2,0);
@@ -897,7 +867,6 @@ void Nod(u8 cycle)
 	    
 	    UP_CDS_SetAngle(19,512,512);
 	    UP_CDS_SetAngle(20,462,512);
-	    //  
   		UP_IOout_SetIO(0,1);
 			UP_IOout_SetIO(1,1);
 			UP_IOout_SetIO(2,1);
@@ -911,10 +880,9 @@ void Nod(u8 cycle)
 	    }		    
     }
     UP_CDS_SetAngle(20,512,512);
-	  // 
 	  UP_delay_ms(300);	
 }
-void Dance()
+static void Dance(void)
 {
         UP_CDS_SetAngle(1,441,512);
         UP_CDS_SetAngle(2,647,512);
@@ -939,7 +907,6 @@ void Dance()
         UP_CDS_SetAngle(16,488,512);
         UP_CDS_SetAngle(17,463,512);
         UP_CDS_SetAngle(18,637,512);
-        //
 	  		UP_IOout_SetIO(0,0);
 				UP_IOout_SetIO(1,0);
 				UP_IOout_SetIO(2,0);
@@ -956,7 +923,6 @@ void Dance()
         
         UP_CDS_SetAngle(14,550,512);
         UP_CDS_SetAngle(15,176,512);
-        //
 	  		UP_IOout_SetIO(0,0);
 				UP_IOout_SetIO(1,1);
 				UP_IOout_SetIO(2,1);
@@ -973,7 +939,6 @@ void Dance()
         
         UP_CDS_SetAngle(14,658,512);
         UP_CDS_SetAngle(15,289,512);
-        //
 	  		UP_IOout_SetIO(0,0);
 				UP_IOout_SetIO(1,0);
 				UP_IOout_SetIO(2,0);
@@ -996,7 +961,6 @@ void Dance()
         
         UP_CDS_SetAngle(17,653,512);
         UP_CDS_SetAngle(18,333,512);
-        //
 		    if(IsStateChanged())
 		    {
 		    	UP_delay_ms(400);
@@ -1019,7 +983,6 @@ void Dance()
         UP_CDS_SetAngle(14,465,512);
         UP_CDS_SetAngle(15,586,512);
         
-        //
 	  		UP_IOout_SetIO(0,0);
 				UP_IOout_SetIO(1,0);
 				UP_IOout_SetIO(2,0);
@@ -1036,7 +999,6 @@ void Dance()
         
         UP_CDS_SetAngle(17,509,512);
         UP_CDS_SetAngle(18,197,512);
-        //
 		    UP_IOout_SetIO(0,0);
 				UP_IOout_SetIO(1,1);
 				UP_IOout_SetIO(2,1);
@@ -1053,7 +1015,6 @@ void Dance()
         
         UP_CDS_SetAngle(17,651,512);
         UP_CDS_SetAngle(18,330,512);
-        //
 	  		UP_IOout_SetIO(0,0);
 				UP_IOout_SetIO(1,0);
 				UP_IOout_SetIO(2,0);
@@ -1075,7 +1036,6 @@ void Dance()
         UP_CDS_SetAngle(14,640,512);
         UP_CDS_SetAngle(15,269,512);
         
-        //
         UP_IOout_SetIO(0,0);
 				UP_IOout_SetIO(1,1);
 				UP_IOout_SetIO(2,1);
@@ -1089,7 +1049,7 @@ void Dance()
 	      }		        
         UP_delay_ms(700);
 }
-void Play()
+static void Play(void)
 {
 				u8 cyc = 0;
         UP_CDS_SetAngle(1,345,512);
@@ -1115,7 +1075,6 @@ void Play()
         UP_CDS_SetAngle(16,489,512);
         UP_CDS_SetAngle(17,646,512);
         UP_CDS_SetAngle(18,366,512);
-        //
 
 		    UP_IOout_SetIO(0,0);
 				UP_IOout_SetIO(1,0);
@@ -1143,7 +1102,6 @@ void Play()
         UP_CDS_SetAngle(16,429,512);
         UP_CDS_SetAngle(17,550,512);
         UP_CDS_SetAngle(18,244,512);
-        //
 		    UP_IOout_SetIO(0,1);
 				UP_IOout_SetIO(1,1);
 				UP_IOout_SetIO(2,0);
@@ -1161,7 +1119,6 @@ void Play()
 	        UP_CDS_SetAngle(11,613,800);
 	        UP_CDS_SetAngle(12,531,800);       
 	      
-	        //
 			    UP_IOout_SetIO(0,0);
 					UP_IOout_SetIO(1,0);
 					UP_IOout_SetIO(2,0);
@@ -1175,7 +1132,6 @@ void Play()
 	
 	        UP_CDS_SetAngle(11,409,800);
 	        UP_CDS_SetAngle(12,769,800);
-	        //
          UP_delay_ms(280);  
 		     UP_IOout_SetIO(0,1);
   			 UP_IOout_SetIO(1,1);
@@ -1200,7 +1156,6 @@ void Play()
         
         UP_CDS_SetAngle(17,646,512);
         UP_CDS_SetAngle(18,366,512);
-        //
 		    UP_IOout_SetIO(0,0);
 				UP_IOout_SetIO(1,0);
 				UP_IOout_SetIO(2,0);

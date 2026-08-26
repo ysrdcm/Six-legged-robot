@@ -134,7 +134,7 @@ void UP_IOout_Init(void)
 *************************************************/
 void  UP_IOout_SetIO(u8 Channel, u8 Value)
 {
-	if(Channel > UP_IOout_NUM || Value > 1)
+	if(Channel >= UP_IOout_NUM || Value > 1)
 		return;
 	switch(Channel)								//将相应的端口设置成需要的电平
 	{
@@ -161,7 +161,7 @@ void  UP_IOout_SetIO(u8 Channel, u8 Value)
 void  UP_IOout_SetALLIO(u8 Value)
 {
 	u8 i;
-	for(i=0; i<8; i++)
+	for(i=0; i<UP_IOout_NUM; i++)
 	{
 		g_UP_IOVal[i] = Value&0x01;
 		switch(i)								//将相应的端口设置成需要的电平

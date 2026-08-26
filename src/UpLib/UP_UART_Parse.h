@@ -18,8 +18,8 @@ typedef struct _UART_REC_BUF
 
 typedef struct _UART_FRAME_QUEUE
 {
-	u8 Head;
-	u8 Tail;
+	volatile u8 Head;
+	volatile u8 Tail;
 	UP_UART_RECBUF DataBuf[UP_UART_FRAMENUM_MAX];
 }UP_UART_FRAME;
 

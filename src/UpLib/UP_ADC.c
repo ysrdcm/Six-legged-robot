@@ -10,7 +10,7 @@
 #include "STM32Lib\\stm32f10x.h"
 #include "UP_ADC.h"
 
-u16 g_ADValue[16] = {0};			//当前ADC值
+volatile u16 g_ADValue[16] = {0};			//当前ADC值
 
 /*************************************************
   函数名称: UP_ADC_DMAConfiguration
@@ -161,6 +161,8 @@ u16 UP_ADC_GetValue(u8 Channel)
 *************************************************/
 u8 UP_ADC_GetIO(u8 Channel)
 {
+	if(Channel >= 16)
+		return 0;
 	return 	(g_ADValue[Channel] > 500)?1:0;
 }
 

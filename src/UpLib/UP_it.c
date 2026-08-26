@@ -170,13 +170,13 @@ void EXTI9_5_IRQHandler(void)
 {
 	if(EXTI_GetITStatus(EXTI_Line5) != RESET)
 		EXTI_IRQHandler(EXTI_Line5);
-	else if(EXTI_GetITStatus(EXTI_Line6) != RESET)
+	if(EXTI_GetITStatus(EXTI_Line6) != RESET)
 		EXTI_IRQHandler(EXTI_Line6);
-	else if(EXTI_GetITStatus(EXTI_Line7) != RESET)
+	if(EXTI_GetITStatus(EXTI_Line7) != RESET)
 		EXTI_IRQHandler(EXTI_Line7);
-	else if(EXTI_GetITStatus(EXTI_Line8) != RESET)
+	if(EXTI_GetITStatus(EXTI_Line8) != RESET)
 		EXTI_IRQHandler(EXTI_Line8);
-	else if(EXTI_GetITStatus(EXTI_Line9) != RESET)
+	if(EXTI_GetITStatus(EXTI_Line9) != RESET)
 		EXTI_IRQHandler(EXTI_Line9);
 }
 
@@ -184,54 +184,41 @@ void EXTI15_10_IRQHandler(void)
 {
 	if(EXTI_GetITStatus(EXTI_Line10) != RESET)
 		EXTI_IRQHandler(EXTI_Line10);
-	else if(EXTI_GetITStatus(EXTI_Line11) != RESET)
+	if(EXTI_GetITStatus(EXTI_Line11) != RESET)
 		EXTI_IRQHandler(EXTI_Line11);
-	else if(EXTI_GetITStatus(EXTI_Line12) != RESET)
+	if(EXTI_GetITStatus(EXTI_Line12) != RESET)
 		EXTI_IRQHandler(EXTI_Line12);
-	else if(EXTI_GetITStatus(EXTI_Line13) != RESET)
+	if(EXTI_GetITStatus(EXTI_Line13) != RESET)
 		EXTI_IRQHandler(EXTI_Line13);
-	else if(EXTI_GetITStatus(EXTI_Line14) != RESET)
+	if(EXTI_GetITStatus(EXTI_Line14) != RESET)
 		EXTI_IRQHandler(EXTI_Line14);
-	else if(EXTI_GetITStatus(EXTI_Line15) != RESET)
+	if(EXTI_GetITStatus(EXTI_Line15) != RESET)
 		EXTI_IRQHandler(EXTI_Line15);
 }
 
-//extern volatile bool ADC_Ok;
 void DMA1_Channel1_IRQHandler(void)
 {
 	if(DMA_GetITStatus(DMA1_IT_TC1))
  	{
 		DMA_ClearITPendingBit(DMA1_IT_GL1);	//清除全部中断标志
-	//	ADC_Ok=TRUE;
 	}
 }
-/*
-extern void UP_Sev_TimerPro(void);
-void TIM2_IRQHandler(void)
-{
-	UP_Sev_TimerPro();
-}
-*/
 extern void UP_Timer_Pro(void);
 void TIM3_IRQHandler(void)
 {	
 	UP_Timer_Pro();
 }
-/*
-extern void UP_PWM_TimerPro(void);
-void TIM4_IRQHandler(void)
-{	
-	UP_PWM_TimerPro();
-}  // */
 
 void USART1_IRQHandler(void)
 {
+	u8 data;
 	//接收中断
 	if(USART_GetITStatus(USART1,USART_IT_RXNE)==SET)
 	{
 		USART_ClearITPendingBit(USART1,USART_IT_RXNE);
+		data = (u8)USART_ReceiveData(USART1);
 		if(g_UP_BluetoothITAddress != 0)
-			(*((void(*)(u8))g_UP_BluetoothITAddress))(USART_ReceiveData(USART1));
+			(*((void(*)(u8))g_UP_BluetoothITAddress))(data);
 	}
 	
 	//溢出-如果发生溢出需要先读SR,再读DR寄存器 则可清除不断入中断的问题
@@ -244,12 +231,14 @@ void USART1_IRQHandler(void)
 
 void UART5_IRQHandler(void)
 {
+	u8 data;
 	//接收中断
 	if(USART_GetITStatus(UART5,USART_IT_RXNE)==SET)
 	{
 		USART_ClearITPendingBit(UART5,USART_IT_RXNE);
+		data = (u8)USART_ReceiveData(UART5);
 		if(g_UP_USR232ITAddress != 0)
-			(*((void(*)(u8))g_UP_USR232ITAddress))(USART_ReceiveData(UART5));
+			(*((void(*)(u8))g_UP_USR232ITAddress))(data);
 	}
 	
 	//溢出-如果发生溢出需要先读SR,再读DR寄存器 则可清除不断入中断的问题
@@ -259,18 +248,16 @@ void UART5_IRQHandler(void)
 		USART_ReceiveData(UART5);				//读DR
 	}
 }
-extern void UP_Zigbee_Rec(u32 data);
-u32 count=0;
 void UART4_IRQHandler(void)
 {
+	u8 data;
 	//接收中断
 	if(USART_GetITStatus(UART4,USART_IT_RXNE)==SET)
 	{
 		USART_ClearITPendingBit(UART4,USART_IT_RXNE);
- 		if(g_UP_ZigbeeITAddress != 0)
- 			(*((void(*)(u8))g_UP_ZigbeeITAddress))(USART_ReceiveData(UART4));
-		//UP_Zigbee_Rec((u32)USART_ReceiveData(UART4));
-		//count++;
+		data = (u8)USART_ReceiveData(UART4);
+		if(g_UP_ZigbeeITAddress != 0)
+			(*((void(*)(u8))g_UP_ZigbeeITAddress))(data);
 	}
 	//溢出-如果发生溢出需要先读SR,再读DR寄存器 则可清除不断入中断的问题
 	if(USART_GetFlagStatus(UART4,USART_FLAG_ORE)==SET)
